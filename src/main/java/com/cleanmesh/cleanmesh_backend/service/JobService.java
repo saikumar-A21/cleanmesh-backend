@@ -138,6 +138,11 @@ public class JobService {
     public JobResponse completeJob(Long jobId) {
     	Job job= jobRepository.findById(jobId)
     			.orElseThrow(()->new ResourceNotFoundException("Job not Found with id "+jobId));
+    	
+    	 if (job.getStatus() == JobStatus.COMPLETED) {
+    	        return JobResponse.fromEntity(job);
+    	    }
+    	 
     	if(job.getStatus()!=JobStatus.IN_PROGRESS) {
     		 throw new IllegalStateException(
     	                "Only an IN_PROGRESS job can be completed"
