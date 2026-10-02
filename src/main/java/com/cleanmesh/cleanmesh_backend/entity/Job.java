@@ -1,8 +1,6 @@
 package com.cleanmesh.cleanmesh_backend.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -20,47 +19,41 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="bookings")
+@Table(name="jobs")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Booking {
+public class Job {
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(name="customer_id",nullable=false)
-	private Customer customer;
+	@JoinColumn(name="worker_id")
+	private Worker worker;
 	
-	@ManyToOne
-	@JoinColumn(name="cleaning_service_id",nullable=false)
-	private CleaningService cleaningService;
 	
-	@Column(nullable=false)
-	private LocalDate bookingDate;
-	
-	@Column(nullable=false)
-	private LocalTime bookingTime;
-	
-	@Column(nullable=false)
-	private String address;
+	@OneToOne
+	@JoinColumn(name="booking_id", nullable=false, unique=true)
+	private Booking booking;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable=false)
-	private BookingStatus status;
+	private JobStatus status=JobStatus.COMPLETED;
 	
-	@Column(nullable=false,updatable=false)
+	@Column(nullable=false, updatable=false)
 	private LocalDateTime createdAt;
-	
 	
 	@PrePersist
 	protected void onCreate() {
 		createdAt=LocalDateTime.now();
 		if(status==null) {
-			status=BookingStatus.REQUESTED;
+			status=JobStatus.COMPLETED;
 		}
 	}
-
 	
+	
+	
+
 }
